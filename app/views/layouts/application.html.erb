@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title >
+  	Scheduler
+  </title>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+  <![endif]-->
+  <%= favicon_link_tag 'favicon.ico' %>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<div class="navbar navbar-fixed-top" >
+    <div class="navbar-inner" >
+      <div class="container" id="logo">
+        
+        <a class="brand" href="/"><h1 id="logo-text">VT Scheduler</h1></a>
+        
+      </div>
+    </div>
+  </div>
+
+<body id="main-body">
+  
+<%= yield %>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  crn: 1
+  number: 1
+  title: MyString
+  hours: 1
+  instructor: MyString
+  days: 
+  begin: 2013-08-10 14:28:16
+  end: 2013-08-10 14:28:16
+  location: MyString
+
+two:
+  crn: 1
+  number: 1
+  title: MyString
+  hours: 1
+  instructor: MyString
+  days: 
+  begin: 2013-08-10 14:28:16
+  end: 2013-08-10 14:28:16
+  location: MyString

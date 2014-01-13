@@ -1,0 +1,83 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="span8">
+        <div class="span-container">
+      	 <%= form_tag({}, {:method => :post, id: "sform"}) do %>
+            <%= label_tag(:course_codes_label, "Course Codes:") %>
+
+            <div id='cc_inputs'>
+              <% if @ccs && @ccs.size > 0 %>
+                <% @ccs.each_with_index do |code, i|%>
+                  <%= text_field_tag "cc_" + i.to_s, code, { :id => "cc_" + i.to_s, 
+                  :class => "schedule_input"} %>
+                <% end %>
+                
+              <% else %>
+                <% 6.times do |i| %>
+                  <%= text_field_tag "cc_" + i.to_s, nil, { :id => "cc_" + i.to_s,
+                  :class => "schedule_input"} %>
+                <% end %>
+              <% end %>
+            </div>
+            <input type="button" id="addBtn" value="Add Another Course"/>
+
+            <br/>
+            <br/>
+
+            <%= label_tag(:crns_label, "Courses You're Already In:") %>
+
+            <div id='crn_inputs'>
+              <% if @crns && @crns.size > 0 %>
+                <% @crns.each_with_index do |crn, i|%>
+                  <%= text_field_tag "crn_" + i.to_s, crn, { :id => "crn_" + i.to_s, 
+                  :class => "schedule_input"} %>
+                <% end %>
+                
+              <% else %>
+                <% 6.times do |i| %>
+                  <%= text_field_tag "crn" + i.to_s, nil, { :id => "crn_" + i.to_s,
+                  :class => "schedule_input"} %>
+                <% end %>
+              <% end %>
+            </div>
+            <input type="button" id="addCRNBtn" value="Add Another CRN"/>
+
+            <%= submit_tag("Create Schedule") %>
+            <%= hidden_field_tag "cc_count", @ccs ? @ccs.size : 6, { :id => "cc_count" } %>
+            <%= hidden_field_tag "crn_count", @crns ? @crns.size : 6, { :id => "crn_count" } %>
+          <% end %>
+        </div>
+      </div>
+      <div class="span4">
+        <div class="span-container">
+        <h2>Get Notified When A Seat Opens Up</h2>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+  var nextCCId = $("#cc_count:hidden").val();
+  $("#addBtn").on("click",function(){
+      if (nextCCId < 12){
+        $("#cc_inputs").append("<input type='text' class='schedule_input' id='cc_"+nextCCId+"'/> ");
+        nextCCId++;
+        $("#cc_count:hidden").val(""+nextCCId);
+      }
+  });
+
+  var nextCRNId = $("#crn_count:hidden").val();
+  $("#addCRNBtn").on("click",function(){
+      if (nextCRNId < 12){
+        $("#crn_inputs").append("<input type='text' class='schedule_input' id='crn_"+nextCRNId+"'/> ");
+        nextCRNId++;
+        $("#crn_count:hidden").val(""+nextCRNId);
+      }
+  });
+
+</script>
+
+
