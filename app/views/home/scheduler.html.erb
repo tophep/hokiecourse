@@ -3,79 +3,216 @@
       <div class="span8">
         <div class="span-container">
       	 <%= form_tag({}, {:method => :post, id: "sform"}) do %>
-            <%= label_tag(:course_codes_label, "Course Codes:") %>
+         
+         <div>
+          <div style="float:left">
+            <%= label_tag(:term_label, "Term:") %>
+            <select name="term_code" id="term_code">
+              <option value="201409">Fall 2014</option>
+              <option value="201406">Summer I 2014</option>
+              <option value="201407">Summer II 2014</option>
+            </select>
+          </div>
+          <div style="float:left;padding-left:15px">
+            <%= label_tag(:after_label, "Start After:") %>
+            <select name="after" id="after" class="time">
+              <option value="0">Whenever</option>
+              <option value="08:00">8:00 AM</option>
+              <option value="09:05">9:05 AM</option>
+              <option value="10:10">10:10 AM</option>
+            </select>
+          </div>
+          <div style="float:left;padding-left:15px">
+            <%= label_tag(:before_label, "End Before:") %>
+            <select name="before" id="before" class="time">
+              <option value="0">Whenever</option>
+              <option value="18:00">6:00 PM</option>
+              <option value="17:00">5:00 PM</option>
+              <option value="16:00">4:00 PM</option>
+            </select>
+          </div>
+          <div style="float:left;padding-left:15px">
+            <%= label_tag(:before_label, "No 8 AM's") %>
+            <div class="roundCheck">
+              <input name = "check" type="checkbox" id="roundCheck" name="check"/>
+              <label for="roundCheck"></label>
+            </div>
+          </div>
+        </div>
 
-            <div id='cc_inputs'>
-              <% if @ccs && @ccs.size > 0 %>
-                <% @ccs.each_with_index do |code, i|%>
+
+        <br/> 
+
+            
+        <div style="float:left">
+          <br/>
+          <%= label_tag(:course_codes_label, "Course Codes:") %>
+
+          <div id='cc_inputs'>
+            <% if @ccs && @ccs.size > 0 %>
+              <% @ccs.each_with_index do |code, i|%>
+                <%if code%>
                   <%= text_field_tag "cc_" + i.to_s, code, { :id => "cc_" + i.to_s, 
-                  :class => "schedule_input"} %>
-                <% end %>
-                
-              <% else %>
-                <% 6.times do |i| %>
-                  <%= text_field_tag "cc_" + i.to_s, nil, { :id => "cc_" + i.to_s,
-                  :class => "schedule_input"} %>
-                <% end %>
+                  :class => "schedule_input", :maxlength => "12"} %>
+                <%end%>
               <% end %>
-            </div>
-            <input type="button" id="addBtn" value="Add Another Course"/>
-
-            <br/>
-            <br/>
-
-            <%= label_tag(:crns_label, "Courses You're Already In:") %>
-
-            <div id='crn_inputs'>
-              <% if @crns && @crns.size > 0 %>
-                <% @crns.each_with_index do |crn, i|%>
-                  <%= text_field_tag "crn_" + i.to_s, crn, { :id => "crn_" + i.to_s, 
-                  :class => "schedule_input"} %>
-                <% end %>
-                
-              <% else %>
-                <% 6.times do |i| %>
-                  <%= text_field_tag "crn" + i.to_s, nil, { :id => "crn_" + i.to_s,
-                  :class => "schedule_input"} %>
-                <% end %>
+              
+            <% else %>
+              <% 6.times do |i| %>
+                <%= text_field_tag "cc_" + i.to_s, nil, { :id => "cc_" + i.to_s,
+                :class => "schedule_input", :maxlength => "12"} %>
               <% end %>
-            </div>
-            <input type="button" id="addCRNBtn" value="Add Another CRN"/>
+            <% end %>
+          </div>
+          <a class="btn btn-success" type="button" id="addCourse"><b>+</b></a>
+          <a class="btn btn-danger" type="button" id="delCourse"><b>-</b></a>
+        </div>
+            
 
-            <%= submit_tag("Create Schedule") %>
+        <br/>
+
+
+        <div style="float:left">
+          <br/>
+          <%= label_tag(:crns_label, "Courses You're Already In:") %>
+
+          <div id='crn_inputs'>
+            <% if @crns && @crns.size > 0 %>
+              <% @crns.each_with_index do |crn, i|%>
+                <%= text_field_tag "crn_" + i.to_s, crn, { :id => "crn_" + i.to_s, 
+                :class => "schedule_input"} %>
+              <% end %>
+              
+            <% else %>
+              <% 6.times do |i| %>
+                <%= text_field_tag "crn" + i.to_s, nil, { :id => "crn_" + i.to_s,
+                :class => "schedule_input"} %>
+              <% end %>
+            <% end %>
+          </div>
+          <a class="btn btn-success" type="button" id="addCRN"><b>+</b></a>
+          <a class="btn btn-danger" type="button" id="delCRN"><b>-</b></a>
+        </div>
+
+            
+
+            <%= submit_tag("Make Schedule", class: "btn btn-primary", style: "float:right") %>
             <%= hidden_field_tag "cc_count", @ccs ? @ccs.size : 6, { :id => "cc_count" } %>
             <%= hidden_field_tag "crn_count", @crns ? @crns.size : 6, { :id => "crn_count" } %>
           <% end %>
         </div>
       </div>
-      <div class="span4">
+
+
+      <div class="span4" style="float:left">
         <div class="span-container">
+
         <h2>Get Notified When A Seat Opens Up</h2>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+
       </div>
-    </div>
+
+      <%if @schedule%>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="span12">
+            <div class="span-container">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>CRN</th>
+                    <th>Course</th>
+                    <th>Title</th>
+                    <th>Instructor</th>
+                    <th>Location</th>
+                    <th>Days</th>
+                    <th>Begin</th>
+                    <th>End</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% @schedule.each do |course| %>
+                    <tr>
+                      <td><a href="<%= course.banner_url%>"></a><%= course.crn %></td>
+                      <td><%= course.subject_code %></td>
+                      <td><%= course.title %></td>
+                      <td><%= course.instructor %></td>
+                      <td><%= course.location %></td>
+                      <td><%= course.days %></td>
+                      <td><%= course.pretty_begin %></td>
+                      <td><%= course.pretty_end %></td>
+                    </tr>
+                    <% course.additional_times.each do |at| %>
+                      <tr>
+                      <td colspan="4" style="text-align:center"> --- Additional Times --- </td>
+                      <td><a href="<%= course.banner_url%>"></a><%= at.location %></td>
+                      <td><%= at.days %></td>
+                      <td><%= at.pretty_begin %></td>
+                      <td><%= at.pretty_end %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>    
+          </div>
+        </div>
+        </div>
+      <% end %>
 </div>
+
 
 
 
 <script type="text/javascript">
 
   var nextCCId = $("#cc_count:hidden").val();
-  $("#addBtn").on("click",function(){
+  $("#addCourse").on("click",function(){
       if (nextCCId < 12){
         $("#cc_inputs").append("<input type='text' class='schedule_input' id='cc_"+nextCCId+"'/> ");
         nextCCId++;
         $("#cc_count:hidden").val(""+nextCCId);
       }
+
+  });
+
+  $("#delCourse").click(function () {
+    if(nextCCId > 6){
+       nextCCId--;
+      $("#cc_count:hidden").val(""+nextCCId);
+      $("#cc_" + nextCCId).remove();
+    }
   });
 
   var nextCRNId = $("#crn_count:hidden").val();
-  $("#addCRNBtn").on("click",function(){
+  $("#addCRN").on("click",function(){
       if (nextCRNId < 12){
         $("#crn_inputs").append("<input type='text' class='schedule_input' id='crn_"+nextCRNId+"'/> ");
         nextCRNId++;
         $("#crn_count:hidden").val(""+nextCRNId);
       }
+  });
+
+  $("#delCRN").click(function () {
+    if(nextCRNId > 6){
+       nextCRNId--;
+      $("#crn_count:hidden").val(""+nextCRNId);
+      $("#crn_" + nextCRNId).remove();
+    }
+  });
+
+  $("tr").click(function() {
+    var link = $(this).find("a");
+
+    link.attr("target", "_blank");
+    if (link.attr("href")){
+      window.open(link.attr("href"));  
+    }
+    
+
+    return false;
   });
 
 </script>

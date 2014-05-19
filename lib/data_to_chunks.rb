@@ -16,6 +16,24 @@ module DataToChunks
 
   COURSE_LISTING_DIRECTORY = "#{Rails.root}/info/course_listings/"
 
+  def self.extract_chunks(info)
+    chunks = Array.new
+
+    if first_line = first_crn_line(info)
+
+      while num_lines = first_crn_line(info[first_line+1, info.size])
+
+        last_line = first_line + num_lines
+        chunks << Chunk.new(info[first_line..last_line])
+
+        num_lines += 1  # account for zero-indexing
+        first_line += num_lines
+      end
+      chunks << extract_end_chunk(info)
+
+    end
+  end
+
   # Returns an array of all the chunks in the info files
   def self.extract_all_chunks
   	chunks = Array.new
@@ -39,15 +57,15 @@ module DataToChunks
 
   		first_line = first_crn_line(info)
 
-  		while num_lines = first_crn_line(info[first_line+1, info.size])
+  		while num_lines = first_crn_line(info[first_line + 1, info.size])
             
             last_line = first_line + num_lines
-            chunks << Chunk.new(info[first_line..last_line], false)
+            chunks << Chunk.new(info[first_line..last_line])
 
             num_lines += 1	# account for zero-indexing
             first_line += num_lines
-        end
-        chunks << extract_end_chunk(info)
+      end
+      chunks << extract_end_chunk(info)
   	end
   end
 

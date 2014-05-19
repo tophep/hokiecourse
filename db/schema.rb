@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140107220253) do
+ActiveRecord::Schema.define(version: 20140415220502) do
 
   create_table "additional_times", force: true do |t|
     t.string   "begin"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20140107220253) do
     t.string   "year"
     t.string   "term"
     t.boolean  "open"
+    t.string   "term_code"
   end
 
   create_table "subjects", force: true do |t|

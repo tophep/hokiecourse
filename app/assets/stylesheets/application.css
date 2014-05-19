@@ -22,7 +22,7 @@
 
 #main-body{
 	background-color: grey;
-	background-image: url('http://www.funwallz.com/image/grass-green-sky-tree-trees-e-hd-wallpaper-65070.jpg');
+	background: url(background.jpg);
 	-webkit-background-size: cover;
   	-moz-background-size: cover;
   	-o-background-size: cover;

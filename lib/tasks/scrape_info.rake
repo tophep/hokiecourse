@@ -4,13 +4,70 @@ namespace :scrape_info do
   require_relative '../chunks_to_courses.rb'
   require_relative '../data_to_chunks.rb'
 
-  TERM_CODE_MAP = {"09" => "Fall", "12" => "Winter", "01" => "Spring", "06" => "Summer I", "07" => "Summer II"}
+  
   TIME_TABLE_URL = "https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest"
   COURSE_LISTING_DIRECTORY = DataToChunks::COURSE_LISTING_DIRECTORY
 
   def delete_course_listings
-    dir_path = COURSE_LISTING_DIRECTORY
-    Dir.foreach(dir_path) {|f| fn = File.join(dir_path, f); File.delete(fn) if f != '.' && f != '..'}
+    dir = COURSE_LISTING_DIRECTORY 
+    Dir.foreach(dir) {|f| fn = File.join(dir, f); File.delete(fn) if f != '.' && f != '..'}
+  end
+
+  def parse_html(page)
+    info = Array.new
+    page.parser.css("td").each do |item|
+      content = item.content
+      lines = content.split("\n")
+      lines.each do |line|
+        info.push(line.strip)
+      end
+
+      if lines.empty? && !content.empty?
+        info.push("")
+      end
+      
+      while content.end_with?("\n")
+        info.push("")
+        content = content[0..-2]
+      end
+    end
+    info
+  end
+
+  # def parse_test(page)
+  #   sizes = Hash.new(0)
+  #   page.parser.css("table.dataentrytable tr").each do |line|
+  #     contents = line.content
+  #     if contents[/(\A|\D)\d{5}&nbsp/].to_s[/\d{5}/]
+  #       contents = contents.split(/\s+/)
+  #       size = contents.size
+  #       sizes[size] += 1
+  #     end
+  #   end
+  #   return sizes
+  # end
+
+
+  task :test => :environment do
+
+    stuff = []
+
+    agent = Mechanize.new
+    page = agent.get(TIME_TABLE_URL)
+    form = page.forms[0]
+      
+
+    Subject.all.reverse.each do |sub|
+      form.subj_code = sub.abbrev
+      form.TERMYEAR = "201409"
+      page = agent.submit(form)
+      
+      stuff.concat parse_test(page)
+      stuff.uniq!
+
+    end
+
+    puts stuff
   end
 
 
@@ -38,40 +95,25 @@ namespace :scrape_info do
 
   task :by_term, [:term_code] => [:environment] do |t, args|
     term_code = args[:term_code]
-    year = term_code[0,4]
-    term = TERM_CODE_MAP[term_code[4,6]]
     
     
     Rake::Task["scrape_info:scrape_subjects"].execute(term_code: term_code)
-    Rake::Task["scrape_info:scrape_course_listings"].execute(term_code: term_code)
-    Rake::Task["scrape_info:strip_course_listings"].execute
-    Rake::Task["scrape_info:remove_empty_course_listings"].execute
-    ChunksToCourses.create_all_courses(year, term)
+    Rake::Task["scrape_info:scrape_courses"].execute(term_code: term_code)
     Rake::Task["scrape_info:update_open_courses"].execute(term_code: term_code)
   end
 
-  task :update_open_courses, [:term_code] => [:environment] do |t, args|
-    term_code = args[:term_code]
-    year = term_code[0,4]
-    term = TERM_CODE_MAP[term_code[4,6]]
-
-    Rake::Task["scrape_info:scrape_course_listings"].execute(term_code: term_code, open_only: true)
-    Rake::Task["scrape_info:strip_course_listings"].execute
-    Rake::Task["scrape_info:remove_empty_course_listings"].execute
-    ChunksToCourses.update_open_courses(year, term)
-  end
 
   task :scrape_subjects, [:term_code] => [:environment] do |t, args|
     term_code = args[:term_code]
   	reading = false
 
     open(TIME_TABLE_URL).each do |line|
-      if line.include?('case') && line.include?(term_code)
+      if line.downcase.include?('case') && line.include?(term_code)
         reading = true
         next
       elsif reading && line.blank?
         reading = false
-        next
+        break
       elsif reading
         if line.match(/"(.+)( -)/)  # This condition skips the "All Subjects" option by detecting a dash mark
         	abbrev = line.match(/"(.+)( -)/)[1]
@@ -90,7 +132,7 @@ namespace :scrape_info do
     end
   end
 
-  task :scrape_course_listings, [:term_code, :open_only] => [:environment] do |t, args|
+  task :write_course_listings, [:term_code, :open_only] => [:environment] do |t, args|
     delete_course_listings
 
     term_code = args[:term_code]
@@ -106,13 +148,7 @@ namespace :scrape_info do
       file_path = COURSE_LISTING_DIRECTORY + sub.abbrev + ".html"
       new_page.save_as(file_path)
       puts "Saved Course Listings For #{sub.abbrev}"
-    end
-  end
 
-
-  task :strip_course_listings => :environment do
-    Subject.all.each do |sub|
-      file_path = COURSE_LISTING_DIRECTORY + sub.abbrev + ".html"
       doc = Nokogiri::HTML(File.open(file_path))
 
       File.open(file_path, 'w') do |f|
@@ -121,38 +157,120 @@ namespace :scrape_info do
           f.write("\n")
         end
       end
+
+      file = open(file_path)
+      info = file.to_a
+      file.close
+      unless DataToChunks.first_crn_line(info)
+        puts "#{sub.abbrev} Course List Deleted: No Courses Registered for Subject #{sub.name}"
+        File.delete file_path
+      end
+
     end
   end
 
-  task :remove_empty_course_listings => :environment do
+
+  task :scrape_courses, [:term_code] => [:environment] do |t, args|
+
+    term_code = args[:term_code]
+    year = term_code[0,4]
+    term = term_code[4,6]
+    all_chunks = Array.new
+
+    agent = Mechanize.new
+    page = agent.get(TIME_TABLE_URL)
+    form = page.forms[0]
+  
     Subject.all.each do |sub|
-      file_path = COURSE_LISTING_DIRECTORY + sub.abbrev + ".html"
-      if File.exists?(file_path)
-        file = open(file_path)
-        info = file.to_a
-        file.close
-        unless DataToChunks.first_crn_line(info)
-          puts "#{sub.abbrev} Course List Deleted: No Courses Registered for Subject"
-          File.delete file_path
-        end
+      form.subj_code = sub.abbrev
+      form.TERMYEAR = term_code
+      page = agent.submit(form)
+      
+
+      info = parse_html(page)
+
+      if chunks = DataToChunks.extract_chunks(info)
+        all_chunks += chunks
       end
     end
-  end
 
-
-  task :test => :environment do
-
-    b1 = File.open("box1").to_a
-    b2 = File.open("box2").to_a
-
-    puts b1.size
-    puts b2.size
-
-    b1.each_with_index do |line, i|
-      if line != b2[i]
-        puts i
+    all_chunks.each do |chunk|
+      unless ChunksToCourses.create_course_from_chunk(chunk, year, term)
+        puts "Failed To Create Course #{chunk.data[0]}"
+        puts "Course May Be Registered To A Satellite Campus"
       end
     end
 
   end
+
+  task :update_open_courses, [:term_code] => [:environment] do |t, args|
+
+    term_code = args[:term_code]
+    year = term_code[0,4]
+    term = term_code[4,6]
+    all_chunks = Array.new
+
+    agent = Mechanize.new
+    page = agent.get(TIME_TABLE_URL)
+    form = page.forms[0]
+  
+    Subject.all.each do |sub|
+      form.subj_code = sub.abbrev
+      form.TERMYEAR = term_code
+      form.open_only = "on"
+      page = agent.submit(form)
+      
+
+      info = parse_html(page)
+
+      if chunks = DataToChunks.extract_chunks(info)
+        all_chunks += chunks
+      end
+    end
+
+    ChunksToCourses.update_open_courses(all_chunks, year, term)
+
+  end
+
+  task :chunk_info, [:term_code] => [:environment] do |t, args|
+    term_code = args[:term_code]
+
+    agent = Mechanize.new
+    page = agent.get(TIME_TABLE_URL)
+    form = page.forms[0]
+
+    chunks = Array.new
+  
+    Subject.all.each do |sub|
+      form.subj_code = sub.abbrev
+      form.TERMYEAR = term_code
+      page = agent.submit(form)
+      
+
+      info = parse_html(page)
+
+      if c = DataToChunks.extract_chunks(info)
+        chunks += c
+      end
+    end
+
+    total_chunks = chunks.size
+    sizes = {}
+    formats = Array.new
+    chunks.each do |chunk|
+      if sizes[chunk.size]
+        sizes[chunk.size][0] += 1
+      else
+        sizes[chunk.size] = [1, 0]
+      end
+      unless formats.include? chunk.format
+        formats << chunk.format
+        sizes[chunk.size][1] += 1
+      end
+    end
+    puts "\n#{total_chunks} CHUNKS\n#{sizes.size} SIZES\n#{formats.size} FORMATS"
+    puts "\n\nCHUNK SIZES:"
+    sizes.sort.each {|size, count| puts "\n#{size} Lines : \n  #{count[0]} Occurence(s)\n  #{count[1]} Format(s)"}
+  end
+
 end

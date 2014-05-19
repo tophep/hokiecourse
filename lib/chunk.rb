@@ -11,10 +11,8 @@ class Chunk
 	# A format element is false if the corresponding data element is a blank string, true otherwise
 	# Formats identify how the chunk should be parsed into a Course object
 
-    def initialize(data, is_end_chunk)
+    def initialize(data, is_end_chunk = false)
     	@data = data
-        @size = data.size
-    	@format = create_format
 
         if is_end_chunk
             normalize
@@ -22,7 +20,7 @@ class Chunk
     end
 
     def size
-    	@size
+    	@data.size
     end
 
     def data
@@ -30,7 +28,11 @@ class Chunk
     end
 
   	def format
-  		@format
+  		format = Array.new
+        data.each do |line|
+          format << !line.blank?
+        end
+        format
   	end
 
     private
@@ -39,15 +41,6 @@ class Chunk
     # This method "normalizes" these end-chunks so that their format is recognized during parsing 
     def normalize
         @data << ""
-        @format << false
-        @size += 1
     end
 
- 	def create_format
-	    format = Array.new
-	    data.each do |line|
-	      format << !line.blank?
-	    end
-	    format
- 	end
 end
