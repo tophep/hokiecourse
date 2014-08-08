@@ -212,16 +212,6 @@
       return true;
     }
 
-    $(document).ready(function(){
-      var $window = $(window);
-      var $bgobj = $('body[id="main-body"]');
-      $(window).scroll(function() {
-          var yPos = -($window.scrollTop() / 2); 
-          var coords = '50% '+ yPos + 'px';
-          $bgobj.css({ backgroundPosition: coords });
-      });    
-    });
-
     </script>
 
 
