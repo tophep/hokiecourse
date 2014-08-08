@@ -64,7 +64,7 @@ body { padding-top: 100px; }
 }
 
 
-#logo-text
+.logo-text
 {
 	color:#f57a00;
 	font-family: 'pt-serif';
@@ -144,93 +144,28 @@ select:focus {
 
 .schedule_input[type=text]{
 	width: 100px;
-  	border: 1px solid #f57a00;
+  border: 1px solid #f57a00;
 }
 
 .schedule_input[type=text]:focus{
 	width: 100px;
-  	border: 1px solid #f57a00;
-  	box-shadow: 0 0px 10px #f57a00;
+  border: 1px solid #f57a00;
+  box-shadow: 0 0px 10px #f57a00;
 }
 
-
-
-.roundCheck {
-  width: 28px;
-  height: 28px;
-  position: relative;
-  margin: 8px auto;
-  background: #f57a00;
-  background: -moz-linear-gradient(top, #f57a00 0%, #f57a00 40%, #f57a00 100%);
-  background: -webkit-linear-gradient(top, #f57a00 0%, #f57a00 40%, #f57a00 100%);
-  background: linear-gradient(to bottom, #f57a00 0%, #f57a00 40%, #f57a00 100%);
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
-  -moz-box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
-  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
-}
-.roundCheck label {
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  cursor: pointer;
-  background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 100%);
-  background: -webkit-linear-gradient(top, #ffffff 0%, #ffffff 100%);
-  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%);
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
-  -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px white;
-  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px white;
-  box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px white;
-}
-.roundCheck label:after {
-  content: '';
-  width: 9px;
-  height: 5px;
-  position: absolute;
-  top: 5px;
-  left: 4px;
-  border: 3px solid #520000;
-  border-top: none;
-  border-right: none;
-  background: transparent;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  -moz-transform: rotate(-45deg);
-  -ms-transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-}
-.roundCheck label:hover::after {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
-  opacity: 0.3;
-}
-.roundCheck input[type=checkbox] {
-  visibility: hidden;
-}
-.roundCheck input[type=checkbox]:checked + label:after {
-  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
-  opacity: 1;
+.schedule_input_invalid[type=text]{
+  width: 100px;
+  border: 1px solid #FF0000;
+  box-shadow: 0 0px 15px #FF0000;
+  color:#FF0000;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+.schedule_input_invalid[type=text]:focus{
+  width: 100px;
+  border: 1px solid #FF0000;
+  box-shadow: 0 0px 5px #FF0000;
+  color:#FF0000;
+}
 
 
 
@@ -295,4 +230,15 @@ select:focus {
 .roundCheck input[type=checkbox]:checked + label:after {
   filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
+}
+
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: url('loading.gif') 50% 50% no-repeat rgba(82,0,0,0.9);
 }

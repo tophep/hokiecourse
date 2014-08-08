@@ -6,7 +6,7 @@ namespace :chunk_helper do
     chunks = DataToChunks.extract_all_chunks
     total_chunks = chunks.size
     sizes = {}
-    formats = Array.new
+    formats = []
     chunks.each do |chunk|
       if sizes[chunk.size]
         sizes[chunk.size][0] += 1

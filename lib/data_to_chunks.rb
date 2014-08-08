@@ -17,7 +17,7 @@ module DataToChunks
   COURSE_LISTING_DIRECTORY = "#{Rails.root}/info/course_listings/"
 
   def self.extract_chunks(info)
-    chunks = Array.new
+    chunks = []
 
     if first_line = first_crn_line(info)
 
@@ -36,7 +36,7 @@ module DataToChunks
 
   # Returns an array of all the chunks in the info files
   def self.extract_all_chunks
-  	chunks = Array.new
+  	chunks = []
 
   	Subject.all.each do |sub|
       file_path = COURSE_LISTING_DIRECTORY + sub.abbrev + ".html"
@@ -50,7 +50,7 @@ module DataToChunks
   # Returns an array of all the chunks in the file specified
   def self.extract_chunks_from_file(file_path)
   	if File.exists?(file_path)
-  		chunks = Array.new
+  		chunks = []
   		file = open(file_path)
   		info = file.to_a
   		file.close

@@ -28,7 +28,7 @@ class Chunk
     end
 
   	def format
-  		format = Array.new
+  		format = []
         data.each do |line|
           format << !line.blank?
         end

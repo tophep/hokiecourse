@@ -14,7 +14,7 @@ namespace :scrape_info do
   end
 
   def parse_html(page)
-    info = Array.new
+    info = []
     page.parser.css("td").each do |item|
       content = item.content
       lines = content.split("\n")
@@ -175,7 +175,7 @@ namespace :scrape_info do
     term_code = args[:term_code]
     year = term_code[0,4]
     term = term_code[4,6]
-    all_chunks = Array.new
+    all_chunks = []
 
     agent = Mechanize.new
     page = agent.get(TIME_TABLE_URL)
@@ -208,7 +208,7 @@ namespace :scrape_info do
     term_code = args[:term_code]
     year = term_code[0,4]
     term = term_code[4,6]
-    all_chunks = Array.new
+    all_chunks = []
 
     agent = Mechanize.new
     page = agent.get(TIME_TABLE_URL)
@@ -239,7 +239,7 @@ namespace :scrape_info do
     page = agent.get(TIME_TABLE_URL)
     form = page.forms[0]
 
-    chunks = Array.new
+    chunks = []
   
     Subject.all.each do |sub|
       form.subj_code = sub.abbrev
@@ -256,7 +256,7 @@ namespace :scrape_info do
 
     total_chunks = chunks.size
     sizes = {}
-    formats = Array.new
+    formats = []
     chunks.each do |chunk|
       if sizes[chunk.size]
         sizes[chunk.size][0] += 1
