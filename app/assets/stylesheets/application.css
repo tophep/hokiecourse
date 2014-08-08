@@ -12,26 +12,6 @@
  *= require_tree .
  */
 
- @font-face {
-  font-family: 'pt-serif';
-  src:
-    url('pt-reg.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-#main-body{
-	background-color: grey;
-	background: 
-    url(background.jpg) 50% 0 no-repeat,
-    url(bg.jpg) 50% 0;
-
-  background-attachment:fixed;
-
-	-webkit-background-size: cover;
-  	-moz-background-size: cover;
-  	-o-background-size: cover;
-  	background-size: cover;
-}
+ 
  require bootstrap_and_overrides
  
