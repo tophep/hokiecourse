@@ -40,7 +40,7 @@
       <div style="float:left">
         <br/>
         <%= label_tag(:course_codes_label, "Courses You Want ― Subject Codes") %>
-        <%= label_tag(:sc_invalid, "Invalid Subject #{"Code".pluralize(@scs.size - @valid_scs.size)}", style:"color:#FF0000") if @valid_scs && @valid_scs.size < @scs.size%>
+        <%= label_tag(:sc_invalid, "Invalid Subject #{"Code".pluralize(@scs.size - @valid_scs.size)}") if @valid_scs && @valid_scs.size < @scs.size%>
 
         <div id='sc_inputs'>
           <% count = if @scs && @scs.size > 6 then @scs.size else 6 end%>
