@@ -28,9 +28,10 @@ class HomeController < ApplicationController
     @valid_crns = validate_codes(@year, @term, @crns, :crn)
 
     if (@valid_scs.size > 0)
-      request = {scs:@valid_scs, crns:@valid_crns, no8am:@no8am, 
-      earliest:@earliest, latest:@latest, year:@year, term_code:@term}
-      @results = build_schedule(request)
+      @schedule = generate_valid_combo(all_course_sections(@valid_scs, @year, @term))[0]
+      # request = {scs:@valid_scs, crns:@valid_crns, no8am:@no8am, 
+      # earliest:@earliest, latest:@latest, year:@year, term_code:@term}
+      # @results = build_schedule(request)
     end
 
 

@@ -1,7 +1,43 @@
 module ScheduleBuilder
 
 	def build_schedule(request)
-		
+		fixed_courses = []
+		request[:crns].each do |crn|
+			fixed_courses << Course.where(year:request[:year], 
+				term_code:request[:term_code], crn:crn)
+		end
+
+		sections_info = generate_time_restrictions(request)
+
+	end
+
+	def generate_time_restrictions(request)
+		year = request[:year]
+		term_code = request[:term_code]
+		earliest = request[:earliest]
+		latest = request[:latest]
+		subject_codes = request[:scs]
+		time_restrictions = []
+
+		subject_codes.each do |code|
+			sections = Course.where(year:year, term_code:term_code, subject_code:code)
+			time_restrictions << {sections:sections, earliest:earliest,
+				latest:latest,max:sections.maximum(:begin), 
+				min:sections.minimum(:begin)}
+		end
+		time_restrictions
+	end
+
+	def all_course_sections(subject_codes, year, term_code)
+		course_sections = []
+		subject_codes.each do |code|
+			course_sections << Course.where(year:year, term_code:term_code, subject_code:code)
+		end
+		course_sections
+	end
+
+	def increment_time_string(string, minute_increment)
+		(Time.parse(string) + minute_increment*60).strftime("%H:%M")
 	end
 
 	def validate_codes(year, term_code, codes, code_type)
@@ -13,7 +49,6 @@ module ScheduleBuilder
 		valid_codes
 	end
 
-
 	def parse_subject_code(code)
 		if code && !code.blank?
 			subject = code[/[a-zA-Z]+/]
@@ -24,22 +59,6 @@ module ScheduleBuilder
 
 	def parse_crn(crn)
 		crn if crn && !crn.blank?
-	end
-
-		# Assumes all subject_codes and crn's have been validated
-	def all_course_sections(subject_codes, year, term, time_range = nil)
-		course_sections = []
-		if params[:crns]
-			params[:crns].each do |crn|
-				course_sections << Course.where(year:year, term_code:term, crn:crn)
-			end
-		end
-		subject_codes.each do |subject_code|
-			sections = Course.where(year:year, term_code:term, subject_code:subject_code)
-			sections = sections.where(:begin => nil) + sections.where(:begin => time_range) if time_range
-			course_sections << sections if sections.size > 0
-		end
-		course_sections
 	end
 
 	def valid_schedule?(course_array)
@@ -111,8 +130,6 @@ module ScheduleBuilder
 		end
 		return combos
 	end
-
-	
 
 
 end

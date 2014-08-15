@@ -21,9 +21,7 @@
 }
 
 #main-body{
-	background-color: grey;
-	background: 
-    url(background.jpg) 50% 0 no-repeat fixed;
+	background: #222222 url(background.jpg) 50% 0 no-repeat fixed;
 
   background-attachment:fixed;
 

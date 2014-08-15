@@ -40,48 +40,48 @@
       <div style="float:left">
         <br/>
         <%= label_tag(:course_codes_label, "Courses You Want ― Subject Codes") %>
-        <%= label_tag(:sc_invalid, "Invalid Subject #{"Code".pluralize(@scs.size - @valid_scs.size)}") if @valid_scs && @valid_scs.size < @scs.size%>
+        <%= label_tag(:sc_invalid, "Invalid Subject #{"Code".pluralize(@scs.size - @valid_scs.size)}", style:"color:#FF0000") if @valid_scs && @valid_scs.size < @scs.size%>
 
         <div id='sc_inputs'>
           <% count = if @scs && @scs.size > 6 then @scs.size else 6 end%>
           <%= hidden_field_tag "sc_count", count, { :id => "sc_count" } %>
 
           <% count.times do |i| %>
-          <% value = if @scs then @scs[i] else nil end %>
-          <% style_class = if value && !@valid_scs.include?(value) then "schedule_input_invalid" else "schedule_input" end %>
-          <% placeholder = if i == 0 then "e.g. math-1014" else nil end %>
-          <%= text_field_tag "sc_" + i.to_s, value, { :id => "sc_" + i.to_s,
+            <% value = if @scs then @scs[i] else nil end %>
+            <% style_class = if value && !@valid_scs.include?(value) then "schedule_input_invalid" else "schedule_input" end %>
+            <% placeholder = if i == 0 then "e.g. math-1014" else nil end %>
+            <%= text_field_tag "sc_" + i.to_s, value, { :id => "sc_" + i.to_s,
             :class => style_class, :maxlength => "12", :placeholder => placeholder} %>
-            <% end %>
-          </div>
-          <a class="btn btn-success" type="button" id="addCourse"><b>+</b></a>
-          <a class="btn btn-danger" type="button" id="delCourse"><b>-</b></a>
+          <% end %>
         </div>
+        <a class="btn btn-success" type="button" id="addCourse"><b>+</b></a>
+        <a class="btn btn-danger" type="button" id="delCourse"><b>-</b></a>
+      </div>
 
 
+      <br/>
+
+
+      <div style="float:left">
         <br/>
-
-
-        <div style="float:left">
-          <br/>
-          <%= label_tag(:crns_label, "Courses You're Already In ― CRNs") %>
-          <%= label_tag(:crn_invalid, "Invalid #{"CRN".pluralize(@crns.size - @valid_crns.size)}", style:"color:#FF0000") if @valid_crns && @valid_crns.size < @crns.size%>
+        <%= label_tag(:crns_label, "Courses You're Already In ― CRNs") %>
+        <%= label_tag(:crn_invalid, "Invalid #{"CRN".pluralize(@crns.size - @valid_crns.size)}", style:"color:#FF0000") if @valid_crns && @valid_crns.size < @crns.size%>
 
           <div id='crn_inputs'>
-            <% count = if @crns && @crns.size > 6 then @crns.size else 6 end%>
-            <%= hidden_field_tag "crn_count", count, { :id => "crn_count" } %>
+          <% count = if @crns && @crns.size > 6 then @crns.size else 6 end%>
+          <%= hidden_field_tag "crn_count", count, { :id => "crn_count" } %>
 
-            <% count.times do |i| %>
+          <% count.times do |i| %>
             <% value = if @crns then @crns[i] else nil end %>
             <% style_class = if value && !@valid_crns.include?(value) then "schedule_input_invalid" else "schedule_input" end %>
             <% placeholder = if i == 0 then "e.g. 88243" else nil end %>
             <%= text_field_tag "crn_" + i.to_s, value, { :id => "crn_" + i.to_s, :class => style_class, :maxlength => "5", 
-              :placeholder => placeholder, onkeypress:"return isNumberKey(event)"}%>
-              <% end %>
-            </div>
-            <a class="btn btn-success" type="button" id="addCRN"><b>+</b></a>
-            <a class="btn btn-danger" type="button" id="delCRN"><b>-</b></a>
+            :placeholder => placeholder, onkeypress:"return isNumberKey(event)"}%>
+          <% end %>
           </div>
+          <a class="btn btn-success" type="button" id="addCRN"><b>+</b></a>
+          <a class="btn btn-danger" type="button" id="delCRN"><b>-</b></a>
+        </div>
 
 
 
@@ -95,12 +95,30 @@
         <div class="span-container">
 
           <h2>Get Notified When A Seat Opens Up</h2>
-          <h3>COMING SOON...</h3>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint oscaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          <div>
+          <%= form_tag({}, {:method => :post, id: "tform"}) do %>
+          <%= label_tag(:name_label, "Name") %>
+          <%= text_field_tag "name", nil, { :id => "name", :class =>"schedule_input", :style =>"width:250px"}%>
+          <%= label_tag(:email_label, "E-Mail Address") %>
+          <%= text_field_tag "email", nil, { :id => "email", :class =>"schedule_input", :style =>"width:250px"}%>
+          <%= label_tag(:phone_label, "Phone Number") %>
+          <%= text_field_tag "phone", nil,  { :id => "phone", :class =>"schedule_input"}%>
+          <%= label_tag(:scs_label, "Courses To Watch For") %>
+          <% 4.times do %>
+          <%= text_field_tag "subj", nil, { :id => "subject_code", :class =>"schedule_input"}%>
+          <% end %>
+          <br/>
+          <a class="btn btn-success" type="button" id="addSCS"><b>+</b></a>
+            <a class="btn btn-danger" type="button" id="delSCS"><b>-</b></a>
+          </div>
+          <%= submit_tag("Notify Me", class: "btn btn-primary", style: "float:right") %>
+          <% end %>
         </div>
 
       </div>
     </div>
+
+    <br/>
 
   <%if @schedule%>
   <br/>
@@ -118,7 +136,6 @@
                 <th>Days</th>
                 <th>Begin</th>
                 <th>End</th>
-                <th>Links</th>
               </tr>
             </thead>
 
@@ -133,7 +150,6 @@
                 <td><%= course.days %></td>
                 <td><%= course.pretty_begin %></td>
                 <td><%= course.pretty_end %></td>
-                <td>Links</td>
               </tr>
               <% course.additional_times.each do |at| %>
               <tr>
@@ -151,6 +167,7 @@
       </div>
     </div>
   <% end %>
+  <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 </div>
 
 
